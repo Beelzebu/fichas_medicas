@@ -133,7 +133,12 @@ def run():
             reposo = 0
             tiempo_atencion = 0
             medicamentos_total = 0
-            medicamentos_solicitados = {}
+
+            paracetamol = 0
+            lidocaina = 0
+            omeprazol = 0
+            penicilina = 0
+            salbutamol = 0
             for x in this.fichas:
                 x: Ficha = x
                 if x.paciente.sexo == "M":
@@ -145,10 +150,17 @@ def run():
                 tiempo_atencion += x.tiempo_atencion
                 if x.medicamento is not None:
                     medicamentos_total += 1
-                    dosis: int = 0 if medicamentos_solicitados[x.medicamento.medicamento.nombre] is None else int(
-                        medicamentos_solicitados[x.medicamento.medicamento.nombre])
-                    dosis += x.medicamento.dosis
-                    medicamentos_solicitados[x.medicamento] = dosis
+                    mn = x.medicamento.medicamento.nombre.lower()
+                    if mn == "paracetamol":
+                        paracetamol += 1
+                    elif mn == "lidocaína":
+                        lidocaina += 1
+                    elif mn == "omeprazol":
+                        omeprazol += 1
+                    elif mn == "penicilina":
+                        penicilina += 1
+                    elif mn == "salbutamol":
+                        salbutamol += 1
 
             stats = "Estadísticas de atención:\n" \
                     "  Pacientes atendidos en total: {}\n" \
@@ -166,8 +178,11 @@ def run():
                                                                    tiempo_atencion / len(this.fichas),
                                                                    medicamentos_total)
             print(stats)
-            for k, v in medicamentos_solicitados:
-                print("    " + k + ": " + str(v))
+            print("    Paracetamol: " + str(paracetamol))
+            print("    Lidocaína: " + str(lidocaina))
+            print("    Omeprazol: " + str(omeprazol))
+            print("    Penicilina: " + str(penicilina))
+            print("    Salbutamol: " + str(salbutamol))
             input("Presione enter para continuar.")
     elif option == 5:
         index = toint(input("Ingrese el id de ficha para obtener: "))
