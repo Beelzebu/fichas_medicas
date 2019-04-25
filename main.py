@@ -37,7 +37,7 @@ def run():
     if option == 1:
         print("Ha seleccionado ingresar los datos del paciente, a continuación se le solicitarán los datos para "
               "rellenar la ficha de forma automática.")
-        paciente = Paciente(input("Nombre: "), input("Apellido: "), int(re.sub(r"\D", "", input("RUN: "))),
+        paciente = Paciente(input("Nombre: "), input("Apellido: "), toint(re.sub(r"\D", "", input("RUN: "))),
                             int(input("Teléfono: ")),
                             input("Dirección: "), input("Estado civil: "), input("Sexo: ").upper(),
                             int(input("Edad: ")), input("Grupo sanguíneo: "))
@@ -49,13 +49,14 @@ def run():
         acompaniante = None
         if input("¿El paciente viene acompañado?: ").lower() == "si":
             print("Por favor ingrese los datos del acompañante: ")
-            acompaniante = Acompaniante(input("Nombre: "), input("Apellido: "), int(re.sub(r"\D", "", input("RUN: "))),
+            acompaniante = Acompaniante(input("Nombre: "), input("Apellido: "),
+                                        toint(re.sub(r"\D", "", input("RUN: "))),
                                         input("Parentesco con el paciente: "), int(input("Teléfono: ")))
         print("Por favor ingrese los datos del personal que realizó el ingreso de datos:")
-        personal = Personal(input("Nombre: "), input("Apellido: "), int(re.sub(r"\D", "", input("RUN: "))),
+        personal = Personal(input("Nombre: "), input("Apellido: "), toint(re.sub(r"\D", "", input("RUN: "))),
                             input("Título: "), input("Institución de egreso: "), input("Fecha de titulación: "),
                             int(input("Teléfono: ")), input("Dirección: "))
-        print("Por favor ingrese la fecha y hora: ")
+        print("Por favor ingrese el nivel de urgencia, fecha y hora: ")
         ficha = Ficha(paciente, acompaniante, input("Nivel de urgencia: "), personal, input("Fecha: "), input("Hora: "))
         ficha.id = len(this.fichas) + 1
         this.fichas.append(ficha)
@@ -71,7 +72,8 @@ def run():
             time.sleep(5)
         else:
             print("Ingrese los datos del médico: \n")
-            get_ficha().medico = Medico(input("Nombre: "), input("Apellido: "), int(re.sub(r"\D", "", input("RUN: "))),
+            get_ficha().medico = Medico(input("Nombre: "), input("Apellido: "),
+                                        toint(re.sub(r"\D", "", input("RUN: "))),
                                         input("Titulo: "), input("Institución egreso: "),
                                         input("Fecha de titulación: "), int(input("Teléfono: ")), input("Dirección: "),
                                         input("Especialidad: "))
@@ -123,52 +125,57 @@ def run():
             print(this.ficha_actual)
             input("Presione enter para continuar.")
     elif option == 4:
-        atendidos_hombres = 0
-        atendidos_mujeres = 0
-        reposo = 0
-        tiempo_atencion = 0
-        medicamentos_total = 0
-        medicamentos_solicitados = {}
-        for x in this.fichas:
-            x: Ficha = x
-            if x.paciente.sexo == "M":
-                atendidos_hombres += 1
-            elif x.paciente.sexo == "F":
-                atendidos_mujeres += 1
-            if x.reposo:
-                reposo += 1
-            tiempo_atencion += x.tiempo_atencion
-            if x.medicamento is not None:
-                medicamentos_total += 1
-                dosis: int = 0 if medicamentos_solicitados[x.medicamento.medicamento.nombre] is None else int(
-                    medicamentos_solicitados[x.medicamento.medicamento.nombre])
-                dosis += x.medicamento.dosis
-                medicamentos_solicitados[x.medicamento] = dosis
+        if len(this.fichas) == 0:
+            input("Aún no se han registrado fichas, presione enter para continuar.")
+        else:
+            atendidos_hombres = 0
+            atendidos_mujeres = 0
+            reposo = 0
+            tiempo_atencion = 0
+            medicamentos_total = 0
+            medicamentos_solicitados = {}
+            for x in this.fichas:
+                x: Ficha = x
+                if x.paciente.sexo == "M":
+                    atendidos_hombres += 1
+                elif x.paciente.sexo == "F":
+                    atendidos_mujeres += 1
+                if x.reposo:
+                    reposo += 1
+                tiempo_atencion += x.tiempo_atencion
+                if x.medicamento is not None:
+                    medicamentos_total += 1
+                    dosis: int = 0 if medicamentos_solicitados[x.medicamento.medicamento.nombre] is None else int(
+                        medicamentos_solicitados[x.medicamento.medicamento.nombre])
+                    dosis += x.medicamento.dosis
+                    medicamentos_solicitados[x.medicamento] = dosis
 
-        stats = "Estadísticas de atención:\n" \
-                "  Pacientes atendidos en total: {}\n" \
-                "  Hombres atendidos: {}\n" \
-                "  Mujeres atendidas: {}\n" \
-                "  Pacientes con reposo: {}\n" \
-                "  Tiempo total de atención: {} minutos\n" \
-                "  Tiempo promedio de atención: {} minutos\n" \
-                "  Cantidad de medicamentos solicitados en total: {}\n" \
-                "  Medicamentos solicitados por tipo: {}".format(len(this.fichas),
-                                                                 atendidos_hombres,
-                                                                 atendidos_mujeres,
-                                                                 reposo,
-                                                                 tiempo_atencion,
-                                                                 tiempo_atencion / len(this.fichas),
-                                                                 medicamentos_total,
-                                                                 medicamentos_solicitados)
-        print(stats)
-        input("Presione enter para continuar.")
+            stats = "Estadísticas de atención:\n" \
+                    "  Pacientes atendidos en total: {}\n" \
+                    "  Hombres atendidos: {}\n" \
+                    "  Mujeres atendidas: {}\n" \
+                    "  Pacientes con reposo: {}\n" \
+                    "  Tiempo total de atención: {} minutos\n" \
+                    "  Tiempo promedio de atención: {} minutos\n" \
+                    "  Cantidad de medicamentos solicitados en total: {}\n" \
+                    "  Medicamentos solicitados por tipo: ".format(len(this.fichas),
+                                                                   atendidos_hombres,
+                                                                   atendidos_mujeres,
+                                                                   reposo,
+                                                                   tiempo_atencion,
+                                                                   tiempo_atencion / len(this.fichas),
+                                                                   medicamentos_total)
+            print(stats)
+            for k, v in medicamentos_solicitados:
+                print("    " + k + ": " + str(v))
+            input("Presione enter para continuar.")
     elif option == 5:
         index = toint(input("Ingrese el id de ficha para obtener: "))
         while not isint(index):
             index = toint(input("No se ha ingresado un valor válido, reintente: "))
         if 0 <= index <= len(this.fichas):
             ficha: Ficha = this.fichas[index - 1]
+            clear()
             print(ficha)
             input("Presione enter para continuar.")
         else:
@@ -182,7 +189,7 @@ def run():
         print("Opción inválida, reintente.")
 
 
-def isint(x) -> bool:
+def isint(x: any) -> bool:
     try:
         int(x)
         return True
@@ -190,7 +197,7 @@ def isint(x) -> bool:
         return False
 
 
-def toint(x):
+def toint(x: any):
     return int(x) if isint(x) else x
 
 
