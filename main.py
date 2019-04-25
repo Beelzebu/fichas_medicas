@@ -37,7 +37,8 @@ def run():
     if option == 1:
         print("Ha seleccionado ingresar los datos del paciente, a continuación se le solicitarán los datos para "
               "rellenar la ficha de forma automática.")
-        paciente = Paciente(input("Nombre: "), input("Apellido: "), int(re.sub(r"\D", "", input("RUN: "))), int(input("Teléfono: ")),
+        paciente = Paciente(input("Nombre: "), input("Apellido: "), int(re.sub(r"\D", "", input("RUN: "))),
+                            int(input("Teléfono: ")),
                             input("Dirección: "), input("Estado civil: "), input("Sexo: ").upper(),
                             int(input("Edad: ")), input("Grupo sanguíneo: "))
         while paciente.sexo != "M" and paciente.sexo != "F":
@@ -118,7 +119,7 @@ def run():
                 time.sleep(5)
                 run()
             get_ficha().medicamento = MedicamentoRecetado(medicamento, int(input("Ingrese la dósis: ")),
-                                                                             int(input("Ingrese el número de días: ")))
+                                                          int(input("Ingrese el número de días: ")))
             print(this.ficha_actual)
             input("Presione enter para continuar.")
     elif option == 4:
