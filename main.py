@@ -23,7 +23,8 @@ def run():
     2) Actualizar ficha por el médico
     3) Asignación de medicamentos
     4) Obtención de estadísticas
-    5) Salir
+    5) Imprimir una ficha en base a su id
+    6) Salir
     """
     print(options_str)
     option = input("Seleccione una opción: ")
@@ -36,7 +37,7 @@ def run():
     if option == 1:
         print("Ha seleccionado ingresar los datos del paciente, a continuación se le solicitarán los datos para "
               "rellenar la ficha de forma automática.")
-        paciente = Paciente(input("Nombre: "), input("Apellido: "), int(input("RUN: ")), int(input("Teléfono: ")),
+        paciente = Paciente(input("Nombre: "), input("Apellido: "), int(re.sub(r"\D", "", input("RUN: "))), int(input("Teléfono: ")),
                             input("Dirección: "), input("Estado civil: "), input("Sexo: ").upper(),
                             int(input("Edad: ")), input("Grupo sanguíneo: "))
         while paciente.sexo != "M" and paciente.sexo != "F":
@@ -47,12 +48,12 @@ def run():
         acompaniante = None
         if input("¿El paciente viene acompañado?: ").lower() == "si":
             print("Por favor ingrese los datos del acompañante: ")
-            acompaniante = Acompaniante(input("Nombre: "), input("Apellido: "), int(input("RUN: ")),
+            acompaniante = Acompaniante(input("Nombre: "), input("Apellido: "), int(re.sub(r"\D", "", input("RUN: "))),
                                         input("Parentesco con el paciente: "), int(input("Teléfono: ")))
         print("Por favor ingrese los datos del personal que realizó el ingreso de datos:")
-        personal = Personal(input("Nombre: "), input("Apellido: "), int(input("RUN: ")), input("Título: "),
-                            input("Institución de egreso: "), input("Fecha de titulación: "), int(input("Teléfono: ")),
-                            input("Dirección: "))
+        personal = Personal(input("Nombre: "), input("Apellido: "), int(re.sub(r"\D", "", input("RUN: "))),
+                            input("Título: "), input("Institución de egreso: "), input("Fecha de titulación: "),
+                            int(input("Teléfono: ")), input("Dirección: "))
         print("Por favor ingrese la fecha y hora: ")
         ficha = Ficha(paciente, acompaniante, input("Nivel de urgencia: "), personal, input("Fecha: "), input("Hora: "))
         ficha.id = len(this.fichas) + 1
@@ -61,7 +62,7 @@ def run():
         print("Se han ingresado los siguientes datos de atención correctamente: ")
         print(str(ficha))
         print("Id de ficha: " + str(ficha.id))
-        input()
+        input("Presione enter para continuar.")
 
     elif option == 2:
         if this.ficha_actual == -1:
@@ -69,11 +70,9 @@ def run():
             time.sleep(5)
         else:
             print("Ingrese los datos del médico: \n")
-            get_ficha().medico = Medico(input("Nombre: "), input("Apellido: "), int(input("RUN: ")),
-                                        input("Titulo: "),
-                                        input("Institución egreso: "),
-                                        input("Fecha de titulación: "),
-                                        int(input("Teléfono: ")), input("Dirección: "),
+            get_ficha().medico = Medico(input("Nombre: "), input("Apellido: "), int(re.sub(r"\D", "", input("RUN: "))),
+                                        input("Titulo: "), input("Institución egreso: "),
+                                        input("Fecha de titulación: "), int(input("Teléfono: ")), input("Dirección: "),
                                         input("Especialidad: "))
             get_ficha().sintomas = input("Síntomas: ")
             get_ficha().diagnostico = input("Diagnóstico: ")
@@ -81,43 +80,47 @@ def run():
             if get_ficha().reposo:
                 get_ficha().reposo_dias = int(input("Días de reposo: "))
             get_ficha().tiempo_atencion = int(input("Tiempo de atención en minutos: "))
-            print(this.fichas[this.ficha_actual])
-            input()
+            print(get_ficha())
+            input("Presione enter para continuar.")
     elif option == 3:
-        medicamentos_str = """Seleccione el tipo de medicamento:
-        1) Parcetamol
-        2) Lidocaína
-        3) Omeprazol
-        4) Penicilina
-        5) Salbutamol
-        """
-        medicamento_opt = input(medicamentos_str)
-        while not is_in_range(medicamento_opt, 1, 5):
-            medicamento_opt = input(medicamentos_str)
-            if not isint(option):
-                input("No ha ingresado una opción válida, reintente...")
-                continue
-        medicamento_opt = int(medicamento_opt)
-        medicamento = None
-        if medicamento_opt == 1:
-            medicamento = Paracetamol()
-        elif medicamento_opt == 2:
-            medicamento = Lidocaina()
-        elif medicamento_opt == 3:
-            medicamento = Omeprazol()
-        elif medicamento_opt == 4:
-            medicamento = Penicilina()
-        elif medicamento_opt == 5:
-            medicamento = Salbutamol()
-        else:
-            # DEBUG, nunca debería pasar
-            print("No se ha encontrado un medicamento válido para: " + str(medicamento_opt))
+        if this.ficha_actual == -1:
+            print("Aún no se ha ingresado ninguna ficha, por favor ingrese los datos del paciente.")
             time.sleep(5)
-            run()
-        this.fichas[this.ficha_actual].medicamento = MedicamentoRecetado(medicamento, int(input("Ingrese la dósis: ")),
-                                                                         int(input("Ingrese el número de días: ")))
-        print(this.ficha_actual)
-        input()
+        else:
+            medicamentos_str = """Seleccione el tipo de medicamento:
+            1) Parcetamol
+            2) Lidocaína
+            3) Omeprazol
+            4) Penicilina
+            5) Salbutamol
+            """
+            medicamento_opt = input(medicamentos_str)
+            while not is_in_range(medicamento_opt, 1, 5):
+                medicamento_opt = input(medicamentos_str)
+                if not isint(option):
+                    input("No ha ingresado una opción válida, reintente...")
+                    continue
+            medicamento_opt = int(medicamento_opt)
+            medicamento = None
+            if medicamento_opt == 1:
+                medicamento = Paracetamol()
+            elif medicamento_opt == 2:
+                medicamento = Lidocaina()
+            elif medicamento_opt == 3:
+                medicamento = Omeprazol()
+            elif medicamento_opt == 4:
+                medicamento = Penicilina()
+            elif medicamento_opt == 5:
+                medicamento = Salbutamol()
+            else:
+                # DEBUG, nunca debería pasar
+                print("No se ha encontrado un medicamento válido para: " + str(medicamento_opt))
+                time.sleep(5)
+                run()
+            get_ficha().medicamento = MedicamentoRecetado(medicamento, int(input("Ingrese la dósis: ")),
+                                                                             int(input("Ingrese el número de días: ")))
+            print(this.ficha_actual)
+            input("Presione enter para continuar.")
     elif option == 4:
         atendidos_hombres = 0
         atendidos_mujeres = 0
@@ -158,8 +161,19 @@ def run():
                                                                  medicamentos_total,
                                                                  medicamentos_solicitados)
         print(stats)
-        input()
+        input("Presione enter para continuar.")
     elif option == 5:
+        index = toint(input("Ingrese el id de ficha para obtener: "))
+        while not isint(index):
+            index = toint(input("No se ha ingresado un valor válido, reintente: "))
+        if 0 <= index <= len(this.fichas):
+            ficha: Ficha = this.fichas[index - 1]
+            print(ficha)
+            input("Presione enter para continuar.")
+        else:
+            print("No se ha encontrado una ficha con el id entregado.")
+            time.sleep(5)
+    elif option == 6:
         print("Saliendo del programa...")
         time.sleep(5)
         exit(0)
@@ -176,10 +190,7 @@ def isint(x) -> bool:
 
 
 def toint(x):
-    if isint(x):
-        return int(x)
-    else:
-        return x
+    return int(x) if isint(x) else x
 
 
 def is_in_range(x: any, rmin: int, rmax: int) -> bool:
