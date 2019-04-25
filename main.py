@@ -136,11 +136,10 @@ def run():
             tiempo_atencion += x.tiempo_atencion
             if x.medicamento is not None:
                 medicamentos_total += 1
-
-            dosis: int = int(
-                medicamentos_solicitados[x.medicamento] if medicamentos_solicitados[x.medicamento] is not None else 0)
-            dosis += x.medicamento.dosis
-            medicamentos_solicitados[x.medicamento] = dosis
+                dosis: int = 0 if medicamentos_solicitados[x.medicamento.medicamento.nombre] is None else int(
+                    medicamentos_solicitados[x.medicamento.medicamento.nombre])
+                dosis += x.medicamento.dosis
+                medicamentos_solicitados[x.medicamento] = dosis
 
         stats = "Estadísticas de atención:\n" \
                 "  Pacientes atendidos en total: {}\n" \
@@ -158,8 +157,8 @@ def run():
                                                                  tiempo_atencion / len(this.fichas),
                                                                  medicamentos_total,
                                                                  medicamentos_solicitados)
-        print("Estadísticas de atención: ")
         print(stats)
+        input()
     elif option == 5:
         print("Saliendo del programa...")
         time.sleep(5)
